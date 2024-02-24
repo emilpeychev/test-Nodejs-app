@@ -1,9 +1,9 @@
 def gv
 
 pipeline {   
-    agent any
+    agent k8s-agent
     tools {
-        maven 'maven-3.9'
+        maven 'maven-v3.9.6'
     }
     stages {
         stage("init") {
@@ -30,12 +30,12 @@ pipeline {
             }
         }
 
-        // stage("deploy") {
-        //     steps {
-        //         script {
-        //             gv.deployApp()
-        //         }
-        //     }
-        // }               
+        stage("deploy") {
+            steps {
+                script {
+                    gv.deployApp()
+                }
+            }
+        }               
     }
 } 
