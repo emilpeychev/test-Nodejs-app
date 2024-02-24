@@ -6,6 +6,9 @@ pipeline {
             // Define the label for the Kubernetes pod template
             label 'k8s-agent'
         }
+    tools {
+        'maven-v3.9.6'
+    }
     }
     stages {
         stage("init") {
