@@ -3,12 +3,8 @@ def gv
 pipeline {
     agent {
         kubernetes {
-            // Define the pod template with Maven installed
+            // Define the label for the Kubernetes pod template
             label 'k8s-agent'
-            defaultContainer 'maven'
-            containers {
-                containerTemplate(name: 'maven', image: 'maven:3.6.3-jdk-11', command: 'cat', ttyEnabled: true)
-            }
         }
     }
     stages {
