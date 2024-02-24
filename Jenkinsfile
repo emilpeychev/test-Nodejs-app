@@ -1,7 +1,7 @@
 def gv
 
-pipeline {   
-    "agent any"
+pipeline {
+    agent any
     tools {
         maven 'maven-v3.9.6'
     }
@@ -17,7 +17,6 @@ pipeline {
             steps {
                 script {
                     gv.buildJar()
-
                 }
             }
         }
@@ -36,6 +35,6 @@ pipeline {
                     gv.deployApp()
                 }
             }
-        }               
+        }
     }
-} 
+}
