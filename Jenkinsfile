@@ -1,9 +1,15 @@
 def gv
 
 pipeline {
-    agent any
-    tools {
-        maven 'maven-v3.9.6'
+    agent {
+        kubernetes {
+            // Define the pod template with Maven installed
+            label 'k8s-agent'
+            defaultContainer 'maven'
+            containers {
+                containerTemplate(name: 'maven', image: 'maven:3.6.3-jdk-11', command: 'cat', ttyEnabled: true)
+            }
+        }
     }
     stages {
         stage("init") {
