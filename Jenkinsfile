@@ -1,7 +1,7 @@
 def gv
 
 pipeline {   
-    "agent kubernetes"
+    "agent any"
     tools {
         maven 'maven-v3.9.6'
     }
