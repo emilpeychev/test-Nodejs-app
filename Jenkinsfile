@@ -35,12 +35,12 @@ pipeline {
             }
         }
 
-        // stage("deploy") {
-        //     steps {
-        //         script {
-        //             gv.deployApp()
-        //         }
-        //     }
-        // }
+        stage("deploy") {
+            steps {
+                script {
+                    gv.deployApp()
+                }
+            }
+        }
     }
 }
