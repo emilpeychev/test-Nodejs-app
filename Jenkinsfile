@@ -4,22 +4,6 @@ pipeline {
     agent {
         kubernetes {
             label 'k8s-agent'
-            defaultContainer 'docker'
-            yaml """
-            apiVersion: v1
-            kind: Pod
-            spec:
-              containers:
-              - name: docker
-                image: docker:19.03-dind
-                command:
-                - cat
-                tty: true
-              volumes:
-              - name: docker-socket
-                hostPath:
-                  path: /var/run/docker.sock
-            """
         }
     }
 
