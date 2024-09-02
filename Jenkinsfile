@@ -1,10 +1,17 @@
 def gv
 
 pipeline {
-    agent {
-        docker {
-            image 'gcr.io/kaniko-project/executor:latest'
-            args '-v /kaniko/.docker -v /workspace'
+agent {
+    kubernetes {
+        yaml """
+        apiVersion: v1
+        kind: Pod
+        spec:
+          containers:
+          - name: kaniko
+            image: gcr.io/kaniko-project/executor:latest
+            args: ["-v", "/kaniko/.docker", "-v", "/workspace"]
+        """
         }
     }
 
