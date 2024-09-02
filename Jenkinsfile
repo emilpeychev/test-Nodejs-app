@@ -9,7 +9,7 @@ agent {
         spec:
           containers:
           - name: kaniko
-            image: gcr.io/kaniko-project/executor:latest
+            image: gcr.io/kaniko-project/executor:latest@sha256:<arm64-specific-sha>
             args: ["-v", "/kaniko/.docker", "-v", "/workspace"]
         """
         }
