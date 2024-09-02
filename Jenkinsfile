@@ -2,8 +2,9 @@ def gv
 
 pipeline {
     agent {
-        kubernetes {
-            label 'k8s-agent'
+        docker {
+            image 'gcr.io/kaniko-project/executor:latest'
+            args '-v /kaniko/.docker -v /workspace'
         }
     }
 
