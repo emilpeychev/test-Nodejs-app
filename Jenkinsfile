@@ -2,8 +2,9 @@ def gv
 
 pipeline {
     agent {
-        kubernetes {
-            label 'k8s-agent'
+        docker {
+            image 'docker:latest'
+            args '-e DOCKER_BUILDKIT=1'
         }
     }
 
