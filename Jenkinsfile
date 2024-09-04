@@ -1,39 +1,14 @@
 def gv
 
 pipeline {
-options {
-    ansiColor('xterm')
-}
-    agent {
-        kubernetes {
-            label 'kubeagents'
-        }
+    options {
+        ansiColor('xterm')
     }
-
     agent {
         kubernetes {
             label 'kubeagents'
-            yaml """
-            apiVersion: v1
-            kind: Pod
-            spec:
-              containers:
-              - name: jnlp
-                image: jenkins/inbound-agent:latest
-                args: ['$(JENKINS_SECRET)', '$(JENKINS_NAME)']
-              - name: kaniko
-                image: gcr.io/kaniko-project/executor:latest
-                command:
-                - cat
-                tty: true
-                volumeMounts:
-                - name: kaniko-secret
-                  mountPath: /kaniko/.docker/
-              volumes:
-              - name: kaniko-secret
-                secret:
-                  secretName: docker-config-secret
-            """
+            // Define the pod YAML only if additional customizations are needed
+            // Otherwise, let Jenkins UI handle it
         }
     }
 
@@ -59,8 +34,11 @@ options {
 
         stage("build image with Kaniko") {
             steps {
-                script {
-                    gv.buildImage()
+                container('kaniko') { // Use the Kaniko container
+                    script {
+                        def imageTag = gv.buildImage()
+                        env.IMAGE_TAG = imageTag // Store image tag in environment variable
+                    }
                 }
             }
         }
@@ -68,7 +46,7 @@ options {
         stage("deploy") {
             steps {
                 script {
-                    gv.deployApp()
+                    gv.deployApp(env.IMAGE_TAG) // Pass the image tag to deploy
                 }
             }
         }
