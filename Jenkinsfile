@@ -7,32 +7,31 @@ pipeline {
     agent {
         kubernetes {
             label 'kubeagents'
-            yaml '''
-            apiVersion: v1
-            kind: Pod
-            metadata:
-            name: jenkins-agent
-            spec:
-            containers:
-            - name: jnlp
-                image: jenkins/inbound-agent:latest
-                args: ['$(JENKINS_SECRET)', '$(JENKINS_NAME)']
-                volumeMounts:
-                - name: shared-data
-                mountPath: /shared
-            - name: kaniko
-                image: gcr.io/kaniko-project/executor:latest
-                command:
-                - cat
-                tty: true
-                volumeMounts:
-                - name: shared-data
-                mountPath: /shared
-            volumes:
-            - name: shared-data
-                emptyDir: {}
-
-            '''
+            inheritFrom 'default-pod-template'  // Adjust or remove based on your setup
+            containerTemplate {
+                name 'jnlp'
+                image 'jenkins/inbound-agent:latest'
+                args '${computer.jnlpmac} ${computer.name}'
+                ttyEnabled true
+                alwaysPullImage true
+            }
+            containerTemplate {
+                name 'kaniko'
+                image 'gcr.io/kaniko-project/executor:latest'
+                command 'cat'
+                ttyEnabled true
+                volumeMounts {
+                    mountPath '/kaniko/.docker'
+                    name 'kaniko-secret'
+                }
+                // Add other configurations if necessary
+            }
+            volume {
+                name 'kaniko-secret'
+                secret {
+                    secretName 'docker-config-secret'
+                }
+            }
         }
     }
 
