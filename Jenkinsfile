@@ -10,23 +10,28 @@ pipeline {
             yaml '''
             apiVersion: v1
             kind: Pod
+            metadata:
+            name: jenkins-agent
             spec:
-              containers:
-              - name: jnlp
+            containers:
+            - name: jnlp
                 image: jenkins/inbound-agent:latest
                 args: ['$(JENKINS_SECRET)', '$(JENKINS_NAME)']
-              - name: kaniko
+                volumeMounts:
+                - name: shared-data
+                mountPath: /shared
+            - name: kaniko
                 image: gcr.io/kaniko-project/executor:latest
                 command:
                 - cat
                 tty: true
                 volumeMounts:
-                - name: kaniko-secret
-                  mountPath: /kaniko/.docker/
-              volumes:
-              - name: kaniko-secret
-                secret:
-                  secretName: docker-config-secret
+                - name: shared-data
+                mountPath: /shared
+            volumes:
+            - name: shared-data
+                emptyDir: {}
+
             '''
         }
     }
