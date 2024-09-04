@@ -7,7 +7,7 @@ pipeline {
     agent {
         kubernetes {
             label 'kubeagents'
-            yaml """
+            yaml '''
             apiVersion: v1
             kind: Pod
             spec:
@@ -27,7 +27,7 @@ pipeline {
               - name: kaniko-secret
                 secret:
                   secretName: docker-config-secret
-            """
+            '''
         }
     }
 
@@ -70,3 +70,4 @@ pipeline {
         }
     }
 }
+
