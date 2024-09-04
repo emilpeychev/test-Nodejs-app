@@ -1,10 +1,9 @@
 def gv
 
 pipeline {
-options {
-    ansiColor('xterm')
-}
-
+    options {
+        ansiColor('xterm')
+    }
     agent {
         kubernetes {
             label 'kubeagents'
@@ -54,8 +53,10 @@ options {
 
         stage("build image with Kaniko") {
             steps {
-                script {
-                    gv.buildImage()
+                container('kaniko') {
+                    script {
+                        gv.buildImage()
+                    }
                 }
             }
         }
