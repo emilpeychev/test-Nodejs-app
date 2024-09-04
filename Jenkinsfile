@@ -10,25 +10,23 @@ pipeline {
             yaml '''
             apiVersion: v1
             kind: Pod
-            metadata:
-            name: jenkins-agent
             spec:
-            containers:
-            - name: jnlp
+              containers:
+              - name: jnlp
                 image: jenkins/inbound-agent:latest
-                args: ['${computer.jnlpUrl}']
-            - name: kaniko
+                args: ['$(JENKINS_SECRET)', '$(JENKINS_NAME)']
+              - name: kaniko
                 image: gcr.io/kaniko-project/executor:latest
                 command:
                 - cat
                 tty: true
                 volumeMounts:
                 - name: kaniko-secret
-                mountPath: /kaniko/.docker/
-            volumes:
-            - name: kaniko-secret
+                  mountPath: /kaniko/.docker/
+              volumes:
+              - name: kaniko-secret
                 secret:
-                secretName: docker-config-secre
+                  secretName: docker-config-secret
             '''
         }
     }
