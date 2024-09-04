@@ -15,7 +15,7 @@ pipeline {
             spec:
             containers:
             - name: jnlp
-                image: jenkinsci/inbound-agent:latest
+                image: jenkins/inbound-agent:latest
                 args: ['${computer.jnlpUrl}']
             - name: kaniko
                 image: gcr.io/kaniko-project/executor:latest
