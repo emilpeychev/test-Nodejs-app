@@ -7,6 +7,27 @@ pipeline {
     agent {
         kubernetes {
             label 'kubeagents'
+            yaml '''
+            apiVersion: v1
+            kind: Pod
+            spec:
+              containers:
+              - name: jnlp
+                image: jenkins/inbound-agent:latest
+                args: ['$(JENKINS_SECRET)', '$(JENKINS_NAME)']
+              - name: kaniko
+                image: gcr.io/kaniko-project/executor:latest
+                command:
+                - cat
+                tty: true
+                volumeMounts:
+                - name: kaniko-secret
+                  mountPath: /kaniko/.docker/
+              volumes:
+              - name: kaniko-secret
+                secret:
+                  secretName: docker-config-secret
+            '''
         }
     }
 
