@@ -1,37 +1,34 @@
 def gv
 
 pipeline {
-    options {
-        ansiColor('xterm')
-    }
+options {
+    ansiColor('xterm')
+}
+
     agent {
         kubernetes {
             label 'kubeagents'
-            inheritFrom 'default-pod-template'  // Adjust or remove based on your setup
-            containerTemplate {
-                name 'jnlp'
-                image 'jenkins/inbound-agent:latest'
-                args '${computer.jnlpmac} ${computer.name}'
-                ttyEnabled true
-                alwaysPullImage true
-            }
-            containerTemplate {
-                name 'kaniko'
-                image 'gcr.io/kaniko-project/executor:latest'
-                command 'cat'
-                ttyEnabled true
-                volumeMounts {
-                    mountPath '/kaniko/.docker'
-                    name 'kaniko-secret'
-                }
-                // Add other configurations if necessary
-            }
-            volume {
-                name 'kaniko-secret'
-                secret {
-                    secretName 'docker-config-secret'
-                }
-            }
+            yaml """
+            apiVersion: v1
+            kind: Pod
+            spec:
+              containers:
+              - name: jnlp
+                image: jenkins/inbound-agent:latest
+                args: ['$(JENKINS_SECRET)', '$(JENKINS_NAME)']
+              - name: kaniko
+                image: gcr.io/kaniko-project/executor:latest
+                command:
+                - cat
+                tty: true
+                volumeMounts:
+                - name: kaniko-secret
+                  mountPath: /kaniko/.docker/
+              volumes:
+              - name: kaniko-secret
+                secret:
+                  secretName: docker-config-secret
+            """
         }
     }
 
@@ -57,10 +54,8 @@ pipeline {
 
         stage("build image with Kaniko") {
             steps {
-                container('kaniko') {
-                    script {
-                        gv.buildImage()
-                    }
+                script {
+                    gv.buildImage()
                 }
             }
         }
@@ -74,4 +69,3 @@ pipeline {
         }
     }
 }
-
