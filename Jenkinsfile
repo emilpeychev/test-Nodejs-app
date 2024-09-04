@@ -4,6 +4,11 @@ pipeline {
 options {
     ansiColor('xterm')
 }
+    agent {
+        kubernetes {
+            label 'kubeagents'
+        }
+    }
 
     agent {
         kubernetes {
