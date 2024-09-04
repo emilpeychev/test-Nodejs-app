@@ -25,17 +25,20 @@ def buildImage() {
     return imageTag
 }
 
+
+
 def deployApp(imageTag) {
     echo "Deploying the application with image: ${imageTag}"
 
     // Kubernetes deployment using kubectl
     sh """
-    kubectl set image deployment/your-deployment-name your-container-name=${imageTag}
-    kubectl rollout status deployment/your-deployment-name
+    kubectl set image deployment/your-deployment-name demo-app=${imageTag}
+    kubectl rollout status deployment/demo-app
     """
 
     echo 'Application deployed successfully.'
 }
+
 
 return this
 

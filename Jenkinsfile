@@ -1,17 +1,12 @@
 def gv
 
 pipeline {
-agent {
-    kubernetes {
-        yaml """
-        apiVersion: v1
-        kind: Pod
-        spec:
-          containers:
-          - name: kaniko
-            image: gcr.io/kaniko-project/executor:latest@sha256:<arm64-specific-sha>
-            args: ["-v", "/kaniko/.docker", "-v", "/workspace"]
-        """
+options {
+    ansiColor('xterm')
+}
+    agent {
+        kubernetes {
+            label 'kubeagents'
         }
     }
 
@@ -35,7 +30,7 @@ agent {
             }
         }
 
-        stage("build image") {
+        stage("build image with Kaniko") {
             steps {
                 script {
                     gv.buildImage()
