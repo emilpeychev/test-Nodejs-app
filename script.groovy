@@ -25,20 +25,21 @@ def buildImage() {
     return imageTag
 }
 
-
-
 def deployApp(imageTag) {
     echo "Deploying the application with image: ${imageTag}"
-
-    // Kubernetes deployment using kubectl
-    sh """
-    kubectl set image deployment/your-deployment-name demo-app=${imageTag}
-    kubectl rollout status deployment/demo-app
-    """
-
-    echo 'Application deployed successfully.'
+    
+    try {
+        // Kubernetes deployment using kubectl
+        sh """
+        kubectl set image deployment/your-deployment-name demo-app=${imageTag}
+        kubectl rollout status deployment/your-deployment-name
+        """
+        echo 'Application deployed successfully.'
+    } catch (Exception e) {
+        echo 'Deployment failed!'
+        error "Deployment error: ${e.message}"
+    }
 }
-
 
 return this
 
